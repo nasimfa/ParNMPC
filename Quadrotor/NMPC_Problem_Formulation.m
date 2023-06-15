@@ -39,11 +39,14 @@ OCP.setDiscretizationMethod('Euler');
 % Set the cost function L
 Q = diag([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 R = diag([0, 0, 0]);
+q_terminal = [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000];
 xRef = [0, 0, 0, 0, 0, 0, 0, 0, 0,0.1, 0, 0];
 
 uRef = [0;0;0];
 L =    0.5*(OCP.x-xRef).'*Q*(OCP.x-xRef)...
-     + 0.5*(OCP.u(1:3)-uRef).'*R*(OCP.u(1:3)-uRef)...
+     + 0.5*(OCP.u(1:3)-uRef).'*R*(OCP.u(1:3)-uRef);
+phi = sum((q_terminal.*(x-x_ref).^2)/2);
+L = L + phi
     ;
 OCP.setL(L);
 
