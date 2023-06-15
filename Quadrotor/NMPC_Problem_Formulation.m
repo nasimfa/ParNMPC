@@ -5,7 +5,7 @@ addpath('../ParNMPC/')
 % Create an OptimalControlProblem object
 OCP = OptimalControlProblem(3,... % dim of inputs 
                            12,... % dim of states 
-                            1,... % dim of parameters 
+                            0,... % dim of parameters 
                             24);  % N: num of discritization grids
 
 % Give names to x, u, p
@@ -13,8 +13,6 @@ OCP = OptimalControlProblem(3,... % dim of inputs
     OCP.setStateName({'omega_x','omega_y','omega_z','eta_x','eta_y','eta_z','etadot_x','etadot_y','etadot_z','phi','theta','psi'});
 [u1,u2,u3] = ...
     OCP.setInputName({'u1','u2','u3'});
-[t] = ...
-    OCP.setParameterName({'t'},[1]);
 
 % Set the prediction horizon T
 OCP.setT(1);
@@ -34,7 +32,7 @@ omega_x + omega_z*cos(phi)*tan(theta) + omega_y*sin(phi)*tan(theta);
 omega_y*cos(phi) - 1.0*omega_z*sin(phi);
 (omega_z*cos(phi) + omega_y*sin(phi))/cos(theta)];
 OCP.setf(f);
-OCP.setDiscretizationMethod('Euler');
+OCP.setDiscretizationMethod('RK4');
 
 % Set the cost function L
 Q = diag([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -46,8 +44,8 @@ uRef = [0;0;0];
 L =    0.5*(OCP.x-xRef).'*Q*(OCP.x-xRef)...
      + 0.5*(OCP.u(1:3)-uRef).'*R*(OCP.u(1:3)-uRef);
 phi = sum((q_terminal.*(x-x_ref).^2)/2);
-L = L + phi
-    ;
+L = L + phi;
+
 OCP.setL(L);
 
 % Set the linear constraints G(u,x,p)>=0
@@ -76,9 +74,6 @@ x0 =   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 dim      = OCP.dim;
 N        = OCP.N;
 p      = zeros(dim.p,N);
-p(1,:) = 0;   % X setpoint
-p(2,:) = 0;   % Y setpoint
-p(3,:) = 0;   % Z setpoint 
 
 % Solve the very first OCP 
 solutionInitGuess.lambda = [randn(dim.lambda,1),zeros(dim.lambda,1)];
