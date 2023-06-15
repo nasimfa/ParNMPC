@@ -6,7 +6,7 @@ addpath('../ParNMPC/')
 OCP = OptimalControlProblem(3,... % dim of inputs 
                            12,... % dim of states 
                             1,... % dim of parameters 
-                            48);  % N: num of discritization grids
+                            24);  % N: num of discritization grids
 
 % Give names to x, u, p
 [omega_x , omega_y , omega_z , ta_x , eta_y , eta_z , etadot_x , etadot_y , etadot_z , phi , theta ,psi] = ...
